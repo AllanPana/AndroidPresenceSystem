@@ -9,6 +9,10 @@ public class User {
     private String email;
     private String status;
 
+
+    public User() {
+    }
+
     public User(String email, String status) {
         this.email = email;
         this.status = status;

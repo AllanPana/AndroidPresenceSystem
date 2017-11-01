@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 class ListOnlineViewHolder extends RecyclerView.ViewHolder {
 
-    private TextView tvEmail;
+    protected TextView tvEmail;
     public ListOnlineViewHolder(View itemView) {
         super(itemView);
 
