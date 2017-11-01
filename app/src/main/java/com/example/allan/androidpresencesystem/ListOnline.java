@@ -1,5 +1,6 @@
 package com.example.allan.androidpresencesystem;
 
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +32,13 @@ public class ListOnline extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView recyclerViewOnline;
     private  RecyclerView.LayoutManager layoutManager;
+
+    //Location
+    private static final int MY_PERMISSION_REQUEST_CODE = 7171;
+    private static final int PLAY_SERVICE_RES_REQUEST = 7172;
+    private GoogleApiClient googleApiClient;
+    private LocationRequest locationRequest;
+    private Location lastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

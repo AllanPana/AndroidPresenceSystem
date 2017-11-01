@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AndroidPresenceSystem</string>
+    <string name="title_activity_maps_tracking">Map</string>
 </resources>
