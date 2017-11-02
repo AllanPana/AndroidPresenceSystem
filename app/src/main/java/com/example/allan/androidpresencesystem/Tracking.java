@@ -6,17 +6,17 @@ package com.example.allan.androidpresencesystem;
 
 public class Tracking {
 
-    private String email, uid, lat, lang;
+    private String email, uid, lat, lng;
 
 
     public Tracking() {
     }
 
-    public Tracking(String email, String uid, String lat, String lang) {
+    public Tracking(String email, String uid, String lat, String lng) {
         this.email = email;
         this.uid = uid;
         this.lat = lat;
-        this.lang = lang;
+        this.lng = lng;
     }
 
 
@@ -44,11 +44,11 @@ public class Tracking {
         this.lat = lat;
     }
 
-    public String getLang() {
-        return lang;
+    public String getLng() {
+        return lng;
     }
 
-    public void setLang(String lang) {
-        this.lang = lang;
+    public void setLng(String lng) {
+        this.lng = lng;
     }
 }

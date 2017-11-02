@@ -66,6 +66,16 @@ public class ListOnline extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_online);
 
+        setUpRecyclerView();
+        setUpToolbar();
+
+        locations = FirebaseDatabase.getInstance().getReference("Locations");
+        onlineRef = FirebaseDatabase.getInstance().getReference().child(".info/connected");
+        counterRef = FirebaseDatabase.getInstance().getReference("lastOnline");
+        currentUserRef = FirebaseDatabase.getInstance().getReference("lastOnline")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
         if (ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(
@@ -83,12 +93,8 @@ public class ListOnline extends AppCompatActivity
             }
         }
 
-        setUpRecyclerView();
-
-        setUpToolbar();
 
         setUpSystem();
-
         updateList();
     }
 
@@ -169,11 +175,6 @@ public class ListOnline extends AppCompatActivity
 
 
     private void setUpSystem(){
-        locations = FirebaseDatabase.getInstance().getReference("Locations");
-        onlineRef = FirebaseDatabase.getInstance().getReference().child(".info/connected");
-        counterRef = FirebaseDatabase.getInstance().getReference("lastOnline");
-        currentUserRef = FirebaseDatabase.getInstance().getReference("lastOnline")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         onlineRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -219,19 +220,20 @@ public class ListOnline extends AppCompatActivity
             protected void populateViewHolder(ListOnlineViewHolder viewHolder, final User model, int position) {
                 viewHolder.tvEmail.setText(model.getEmail());
 
-                viewHolder.itemClickListener = new ItemClickListener() {
+
+                viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position) {
                         if (!model.getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
+                            Toast.makeText(view.getContext(), model.getEmail(), Toast.LENGTH_LONG).show();
                             Intent mapIntent = new Intent(ListOnline.this, MapsTrackingActivity.class);
-                            mapIntent.putExtra("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                            mapIntent.putExtra("email", model.getEmail());
                             mapIntent.putExtra("lat", lastLocation.getLatitude());
                             mapIntent.putExtra("lng", lastLocation.getLongitude());
                             startActivity(mapIntent);
                         }
                     }
-                };
-
+                });
             }
         };
         adapter.notifyDataSetChanged();
@@ -250,7 +252,7 @@ public class ListOnline extends AppCompatActivity
                 GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICE_RES_REQUEST).show();
 
             }else {
-                Toast.makeText(this, "", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Device is not supported", Toast.LENGTH_LONG).show();
                 finish();
             }
             return false;
@@ -263,6 +265,7 @@ public class ListOnline extends AppCompatActivity
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API).build();
+        googleApiClient.connect();
     }
 
     private void createLocationRequest() {
@@ -318,7 +321,7 @@ public class ListOnline extends AppCompatActivity
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Toast.makeText(this, "Connection Failed", Toast.LENGTH_LONG).show();
     }
 
     @Override

@@ -8,23 +8,25 @@ import android.widget.TextView;
  * Created by Allan on 31/10/2017.
  */
 
-class ListOnlineViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class ListOnlineViewHolder extends RecyclerView.ViewHolder {
 
     protected TextView tvEmail;
     ItemClickListener itemClickListener;
     public ListOnlineViewHolder(View itemView) {
         super(itemView);
 
-        //setItemClickListener(itemClickListener);
         tvEmail = itemView.findViewById(R.id.tvEmail);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemClickListener.onClick(v, getAdapterPosition());
+            }
+        });
+
     }
 
     public void setItemClickListener(ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
-    @Override
-    public void onClick(View view) {
-        itemClickListener.onClick(view, getAdapterPosition());
-    }
 }

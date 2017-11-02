@@ -48,11 +48,16 @@ public class MapsTrackingActivity extends FragmentActivity implements OnMapReady
             lng = getIntent().getDoubleExtra("lng", 0);
         }
 
-        if (TextUtils.isEmpty(email)){
+        if (!TextUtils.isEmpty(email)){
             loadLocationForThisUser(email);
         }
     }
 
+
+    /**
+     * Load location of all users
+     * @param email
+     */
     private void loadLocationForThisUser(String email) {
         Query queryUserLocation = locationsRef.orderByChild("email").equalTo(email);
         queryUserLocation.addValueEventListener(new ValueEventListener() {
@@ -63,7 +68,7 @@ public class MapsTrackingActivity extends FragmentActivity implements OnMapReady
 
                     //add marker for other user who is online
                     LatLng otherUserLatlong = new LatLng(Double.parseDouble(tracking.getLat()),
-                            Double.parseDouble(tracking.getLang()));
+                            Double.parseDouble(tracking.getLng()));
 
                     //Create location from current user
                     Location currentUserLocation  = new Location("");
@@ -73,21 +78,24 @@ public class MapsTrackingActivity extends FragmentActivity implements OnMapReady
                     // Create location from other user
                     Location otherUserLocation  = new Location("");
                     currentUserLocation.setLatitude(Double.parseDouble(tracking.getLat()));
-                    currentUserLocation.setLongitude(Double.parseDouble(tracking.getLang()));
+                    currentUserLocation.setLongitude(Double.parseDouble(tracking.getLng()));
 
+
+                    //clear old marker
+                    mMap.clear();
 
                     //create marker for the other users
                     mMap.addMarker(new MarkerOptions()
                             .position(otherUserLatlong)
                             .title(tracking.getEmail())
-                            .snippet("" + new DecimalFormat("#.#")
-                            .format(distanceToOthers(currentUserLocation, otherUserLocation)))
+                            .snippet("Distance " + new DecimalFormat("#.#")
+                            .format((currentUserLocation.distanceTo(otherUserLocation))/10000) + " km")
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 12.0f));
                 }
 
-                //create marker for the other users
+                //create marker for current user
                 LatLng currentUserLatLong = new LatLng(lat, lng);
                 mMap.addMarker(new MarkerOptions().position(currentUserLatLong)
                 .title(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
@@ -142,9 +150,6 @@ public class MapsTrackingActivity extends FragmentActivity implements OnMapReady
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
     }
 }
